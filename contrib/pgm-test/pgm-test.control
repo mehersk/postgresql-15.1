@@ -1,0 +1,6 @@
+# pgm-test extension
+comment = 'PGMahouts test extension'
+default_version = '1.1'
+module_pathname = '$libdir/pgm-test'
+relocatable = true
+trusted = true
