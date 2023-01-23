@@ -39,6 +39,7 @@ SUBDIRS = \
 		pg_surgery	\
 		pg_trgm		\
 		pgm-test	\
+		pgm-curl	\
 		pgrowlocks	\
 		pgstattuple	\
 		pg_visibility	\
