@@ -19,7 +19,7 @@ typedef struct {
 static size_t write_callback(void *ptr, size_t size, size_t nmemb, void *userdata) {
     Response *res = (Response *)userdata;
     size_t new_size = res->size + size * nmemb;
-    res->data = (char *)repalloc(res->data, new_size + 1);
+    res->data = (char *)malloc(new_size + 1);
     memcpy(res->data + res->size, ptr, size * nmemb);
     res->size = new_size;
     res->data[new_size] = '\0';
