@@ -64,6 +64,7 @@ Datum pgm_curl_post(PG_FUNCTION_ARGS)
 
     char auth_header[1024];
     char *auth_token = text_to_cstring(token);
+    long response_code = 0;
     struct curl_slist *headers = NULL;
     CURL *curl = curl_easy_init();
     CURLcode res;
@@ -89,7 +90,18 @@ Datum pgm_curl_post(PG_FUNCTION_ARGS)
         curl_slist_free_all(headers);
 
         if (res != CURLE_OK)
+        {
             ereport(ERROR, (errmsg("cURL Error: %s", curl_easy_strerror(res))));
+        }
+        else
+        {
+            curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response_code);
+
+            if (!(response_code >= 200 && response_code <= 205))
+            {
+                ereport(ERROR, (errmsg("Call returned error with response code %ld. Please chech your azure function logs.", response_code)));
+            }
+        }
     }
     else
     {
