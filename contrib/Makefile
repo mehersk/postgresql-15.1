@@ -14,7 +14,7 @@ SUBDIRS = \
 		bloom		\
 		btree_gin	\
 		btree_gist	\
-		citext		\
+		citext		\`
 		cube		\
 		dblink		\
 		dict_int	\
@@ -40,6 +40,7 @@ SUBDIRS = \
 		pg_trgm		\
 		pgm-test	\
 		pgm-curl	\
+		pgm-azure-functions	\
 		pgrowlocks	\
 		pgstattuple	\
 		pg_visibility	\
