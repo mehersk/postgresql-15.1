@@ -5,7 +5,6 @@ RETURNS BOOLEAN AS $$
 DECLARE
   result BOOLEAN;
 BEGIN
-  BEGIN;
 
   CREATE SCHEMA IF NOT EXISTS pgm;
 
@@ -25,12 +24,9 @@ BEGIN
   result := TRUE;
   RAISE NOTICE 'Values stored in pgm.azure_functions and pgm.azure_functions created with permissions granted';
   
-  COMMIT;
-  
   RETURN result;
 EXCEPTION WHEN OTHERS THEN
   result := FALSE;
-  ROLLBACK;
   RAISE WARNING 'Error creating schema, table, view and granting permissions: %', SQLERRM;
   RETURN result;
 END;
@@ -46,7 +42,7 @@ RETURNS BOOLEAN AS $$
 DECLARE
   result BOOLEAN;
 BEGIN
-  BEGIN;
+
   INSERT INTO pgm.azure_functions (
     uri,
     auth_token,
@@ -59,11 +55,10 @@ BEGIN
   );
   result := TRUE;
   RAISE NOTICE 'Added azure function % into azure_functions', alias;
-  COMMIT;
+  
   RETURN result;
 EXCEPTION WHEN OTHERS THEN
   result := FALSE;
-  ROLLBACK;
   RAISE WARNING 'Error adding azure function % into azure_functions: %', alias, SQLERRM;
   RETURN result;
 END;
