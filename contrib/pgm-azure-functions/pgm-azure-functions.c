@@ -46,12 +46,16 @@ Datum pgm_curl_post(PG_FUNCTION_ARGS)
     int ret;
     char *url, *token;
     text *url_text, *token_text;
-    text *function_alias = PG_GETARG_TEXT_P(0);
+    char *query = "SELECT uri, auth_token FROM pgm.azure_functions WHERE function_alias = $1";
+    Oid argtypes[1] = {TEXTOID};
+    int16 nulls[1] = {false};
+    Datum values[1];
+    values[0] = PG_GETARG_TEXT_P(0);
     long response_code = 0;
     CURL *curl;
     CURLcode res;
     MemoryStruct chunk;
-    char header[1024], query[1024];
+    char header[1024];
     struct curl_slist *headers = NULL;
     text *response;
 
@@ -59,16 +63,15 @@ Datum pgm_curl_post(PG_FUNCTION_ARGS)
     if (ret != SPI_OK_CONNECT)
         elog(ERROR, "SPI_connect failed: error code %d", ret);
 
-    snprintf(query, sizeof(query), "SELECT uri, auth_token FROM azure_functions WHERE function_alias = %s", function_alias);
-    ret = SPI_execute(query, true, 0);
+    ret = SPI_execute_with_args(query, 1, argtypes, values, nulls, true, 1);
     if (ret != SPI_OK_SELECT)
         elog(ERROR, "SPI_execute failed: error code %d", ret);
 
     if (SPI_processed > 0)
     {
         HeapTuple tuple = SPI_tuptable->vals[0];
-        url_text = DatumGetTextP(heap_getattr(tuple, SPI_tuptable->tupdesc, 1, &ret));
-        token_text = DatumGetTextP(heap_getattr(tuple, SPI_tuptable->tupdesc, 2, &ret));
+        url_text = DatumGetCString(SPI_getbinval(tuple, SPI_tuptable->tupdesc, 1, &ret));
+        token_text = DatumGetCString(SPI_getbinval(tuple, SPI_tuptable->tupdesc, 2, &ret));
         url = text_to_cstring(url_text);
         token = text_to_cstring(token_text);
     }
@@ -129,6 +132,6 @@ Datum pgm_curl_post(PG_FUNCTION_ARGS)
     }
 
     response = cstring_to_text(chunk.memory);
-    MemoryContextFree(chunk.memory);
+    pfree(chunk.memory);
     PG_RETURN_TEXT_P(response);
 }

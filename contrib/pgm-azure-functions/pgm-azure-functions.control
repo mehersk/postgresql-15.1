@@ -1,6 +1,6 @@
 # pgm-curl extension
 comment = 'PGMahouts curl extension'
 default_version = '1.0'
-module_pathname = '$libdir/pgm-curl'
+module_pathname = '$libdir/pgm-azure-functions.so'
 relocatable = true
 trusted = true

@@ -9,6 +9,7 @@ OBJS = pgm-azure-functions.o
 ifdef USE_PGXS
 PG_CONFIG = pg_config
 PGXS := $(shell $(PG_CONFIG) --pgxs)
+CFLAGS += -g
 include $(PGXS)
 else
 subdir = contrib/pgm-azure-functions
